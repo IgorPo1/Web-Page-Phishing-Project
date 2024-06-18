@@ -1,0 +1,5 @@
+SELECT CORR(url_length, phishing) AS url_length_corr,
+       CORR(n_dots, phishing) AS n_dots_corr,
+       CORR(n_hypens, phishing) AS n_hypens_corr,
+       -- ... (Calculate correlation for each pair of columns)
+FROM web_phishing;
