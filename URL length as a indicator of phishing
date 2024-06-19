@@ -1,0 +1,27 @@
+# Median By Using ROW_NUMBER() Window Function (go to image folder for explaining this concept
+SELECT AVG(url_length) AS "Median"
+FROM
+(SELECT url_length, phishing,
+      ROW_NUMBER() OVER (ORDER BY url_length ASC) AS RowAsc,
+      ROW_NUMBER() OVER (ORDER BY url_length DESC) AS RowDesc
+   FROM web_phishing
+)
+where
+RowAsc IN (RowDesc, RowDesc + 1);
+
+
+WITH RankedUrls AS (
+    SELECT
+        url_length,
+        phishing,
+        ROW_NUMBER() OVER (PARTITION BY phishing ORDER BY url_length) AS RowAsc,
+        COUNT(*) OVER (PARTITION BY phishing) AS TotalRows
+    FROM web_phishing
+)
+SELECT 
+    phishing,
+    AVG(url_length) AS Median_URL_Length
+FROM RankedUrls
+WHERE
+    RowAsc IN (CAST((TotalRows + 1) / 2 AS INT)) 
+GROUP BY phishing;
