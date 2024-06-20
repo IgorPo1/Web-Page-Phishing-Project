@@ -1,27 +1,90 @@
-# Median By Using ROW_NUMBER() Window Function (go to image folder for explaining this concept
-SELECT AVG(url_length) AS "Median"
-FROM
-(SELECT url_length, phishing,
-      ROW_NUMBER() OVER (ORDER BY url_length ASC) AS RowAsc,
-      ROW_NUMBER() OVER (ORDER BY url_length DESC) AS RowDesc
-   FROM web_phishing
-)
-where
-RowAsc IN (RowDesc, RowDesc + 1);
+# Median 
+
+      ## By Using ROW_NUMBER() Window Function (go to image folder for explaining this concept
+      
+      WITH RankedUrls AS (
+          SELECT
+              url_length,
+              phishing,
+              ROW_NUMBER() OVER (PARTITION BY phishing ORDER BY url_length) AS RowAsc,
+              COUNT(*) OVER (PARTITION BY phishing) AS TotalRows
+          FROM web_phishing
+      )
+      SELECT 
+          phishing,
+          AVG(url_length) AS Median_URL_Length
+      FROM RankedUrls
+      WHERE
+          RowAsc IN (CAST((TotalRows + 1) / 2 AS INT)) 
+      GROUP BY phishing;
+      phishing |  median_url_length
+      ----------+---------------------
+              0 | 20.0000000000000000
+              1 | 48.0000000000000000
+      
+      ## By Using A Variable And OFFSET — FETCH
+      DECLARE @c BIGINT = (SELECT COUNT(*) FROM web_phishing)
+      
+      SELECT AVG(url_length) AS "Median"
+      FROM (
+       SELECT url_length
+       FROM web_phishing
+       ORDER BY url_length
+       OFFSET (@c - 1)/2 ROWS
+       FETCH NEXT 1 + (1 - @c%2) ROWS ONLY
+      ) data
+      
+      ## By Using ORDER BY, MIN() And Max() Functions
+      
+      SELECT (
+      (SELECT MAX(url_length)
+      FROM (
+       SELECT TOP 50 PERCENT url_length
+       FROM web_phishing 
+       ORDER BY url_length) AS BottomHalf) +
+      (SELECT MIN(url_length)
+      FROM (
+       SELECT TOP 50 PERCENT url_length
+       FROM web_phishing
+       ORDER BY url_length DESC) AS TopHalf)
+      ) / 2 AS Median
+      
+      ## By Using NTILE() Window Function????
+      
+      SELECT MAX(url_length) AS "Median", phishing
+      FROM (
+       SELECT url_length, phishing
+       NTILE(4) OVER(ORDER BY url_length PARTITION BY phishing)  AS Quartile 
+       FROM web_phishing
+      group by phishing
+      ) 
+      WHERE Quartile = 2;
+      
+      ## By Using PERCENTILE_CONT() Window Function
+      
+      SELECT PERCENTILE_CONT(0.5), phishing 
+      WITHIN GROUP (ORDER BY url_length) OVER(PARTITION BY phishing) AS "Median"
+      FROM web_phishing;
 
 
-WITH RankedUrls AS (
-    SELECT
-        url_length,
-        phishing,
-        ROW_NUMBER() OVER (PARTITION BY phishing ORDER BY url_length) AS RowAsc,
-        COUNT(*) OVER (PARTITION BY phishing) AS TotalRows
-    FROM web_phishing
-)
-SELECT 
-    phishing,
-    AVG(url_length) AS Median_URL_Length
-FROM RankedUrls
-WHERE
-    RowAsc IN (CAST((TotalRows + 1) / 2 AS INT)) 
-GROUP BY phishing;
+# Mean
+
+      ## AVG()
+      SELECT AVG(url_length), phishing from web_phishing group by phishing;
+               avg         | phishing
+      ---------------------+----------
+       23.5899709644510712 |        0
+       66.4911171002695121 |        1
+# Mode
+
+      ## COUNT()
+      SELECT phishing, url_length AS mode_url_length, count
+      FROM (SELECT COUNT(url_length) AS count, phishing, url_length from web_phishing
+      group by url_length, phishing)
+      group by phishing
+      having count = max(count);
+
+      ## MODE()
+      SELECT phishing, MODE() WITHIN GROUP (ORDER BY url_length) AS mode_url_length
+      FROM web_phishing
+      GROUP BY phishing;
