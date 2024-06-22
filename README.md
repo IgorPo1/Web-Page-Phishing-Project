@@ -40,9 +40,9 @@ Business Questions:
 3) Would you say the number of redirections is a strong indicator of whether or not the URL is phishing?  Why or why not?  What metrics do you have to support your answer?
 4) Based on your analysis, what advice would you give to others for deciphering whether or not a URL is phishing?
 
-1) Use the \copy command to import data to a table on a PostgreSQL (create table and then use \copy web_phishing(name of created table) (url_length, n_dots, n_hypens, n_underline, n_slash, n_questionmark, n_equal, n_at, n_and, n_exclamation, n_space, n_tilde, n_comma, n_plus, n_asterisk, n_hastag, n_dollar, n_percent, n_redirection, phishing(columns name, because CSV file has column heading information)) from 'path/for/csv/file' WITH DELIMITER ',' CSV HEADER;)
-2) 
-3)
+Connect the data:
+Use the \copy command to import data to a table on a PostgreSQL from CSV file (create table and then use \copy web_phishing(name of created table) (url_length, n_dots, n_hypens, n_underline, n_slash, n_questionmark, n_equal, n_at, n_and, n_exclamation, n_space, n_tilde, n_comma, n_plus, n_asterisk, n_hastag, n_dollar, n_percent, n_redirection, phishing(columns name, because CSV file has column heading information and you have to specify headers)) from 'path/for/csv/file' WITH DELIMITER ',' CSV HEADER;)
+
 
 Business Answers:
 1) The field with the strongest correlation with the phishing field is n_slash (0.611). The field with the weakest correlation with the phishing field is n_plus (0.007).
