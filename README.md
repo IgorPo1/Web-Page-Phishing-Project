@@ -51,4 +51,6 @@ Mean URL Length: Phishing URLs have a significantly higher mean length (66.49) c
 Distribution: The histograms illustrate that phishing URLs generally have longer lengths, with a wider distribution and more outliers.
 Percentage Longer: A substantial 87.99% of phishing URLs are longer than the average non-phishing URL.
 While a longer URL doesn't definitively mean it's phishing, it does raise a red flag. Combining this information with other factors (like the number of slashes or the presence of certain characters) can help make a more informed decision about a URL's legitimacy.
-3) 
+3) Overall, the number of redirections does not provide a clear distinction between phishing and non-phishing URLs. While there's a slight difference in the means, the distributions are very similar, and the presence of negative values adds complexity to the interpretation. Therefore, relying solely on the number of redirections to identify phishing URLs would not be effective.
+4) URL Length (url_length): Phishing URLs tend to be longer than legitimate URLs. If a URL seems excessively long or contains many unnecessary characters, be cautious. Relying on the number of redirections to identify phishing URLs would not be effective.
+
