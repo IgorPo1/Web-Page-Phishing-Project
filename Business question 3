@@ -39,6 +39,8 @@ Why or why not? What metrics do you have to support your answer?
       ------------------------+----------
        0.52001028806584362140 |        0
        0.36781774304757527005 |        1
+Mean Number of Redirections: Phishing URLs have a slightly lower mean number of redirections (0.31) compared to non-phishing URLs (0.39) without filter
+and (0.37) compared (0.52) after
 
 
 # Mode
