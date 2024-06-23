@@ -9,9 +9,21 @@ Why or why not? What metrics do you have to support your answer?
       ------------------------+----------
        0.39130503021266577729 |        0
        0.30936142126395687806 |        1
+
+      SELECT AVG(n_redirection), phishing from web_phishing where n_redirection>=0  group by phishing;
+             avg           | phishing
+      ------------------------+----------
+       0.52001028806584362140 |        0
+       0.36781774304757527005 |        1
+
 # Mode
 
       ## MODE()
       SELECT phishing, MODE() WITHIN GROUP (ORDER BY n_redirection) AS mode_n_redirection
       FROM web_phishing
+      where n_redirection>=0
       GROUP BY phishing;
+       phishing | mode_n_redirection
+      ----------+--------------------
+              0 |                  0
+              1 |                  0
