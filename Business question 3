@@ -1,1 +1,21 @@
+# Mean
 
+      ## AVG()
+      SELECT AVG(url_length), phishing from web_phishing group by phishing;
+               avg         | phishing
+      ---------------------+----------
+       23.5899709644510712 |        0
+       66.4911171002695121 |        1
+# Mode
+
+      ## COUNT()
+      SELECT phishing, url_length AS mode_url_length, count
+      FROM (SELECT COUNT(url_length) AS count, phishing, url_length from web_phishing
+      group by url_length, phishing)
+      group by phishing
+      having count = max(count);
+
+      ## MODE()
+      SELECT phishing, MODE() WITHIN GROUP (ORDER BY url_length) AS mode_url_length
+      FROM web_phishing
+      GROUP BY phishing;
