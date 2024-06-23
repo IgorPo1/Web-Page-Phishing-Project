@@ -1,0 +1,1 @@
+\copy (YOUR query) TO 'YOUR PATH' WITH (FORMAT CSV, HEADER);
