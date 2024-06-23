@@ -1,6 +1,30 @@
 Would you say the number of redirections is a strong indicator of whether or not the URL is phishing?
 Why or why not? What metrics do you have to support your answer?
 
+# Median 
+
+      ## By Using ROW_NUMBER() Window Function (go to image folder for explaining this concept
+      
+      WITH RankedUrls AS (
+          SELECT
+              n_redirection,
+              phishing,
+              ROW_NUMBER() OVER (PARTITION BY phishing ORDER BY n_redirection) AS RowAsc,
+              COUNT(*) OVER (PARTITION BY phishing) AS TotalRows
+          FROM web_phishing
+      )
+      SELECT 
+          phishing,
+          AVG(n_redirection) AS Median_n_redirection
+      FROM RankedUrls
+      WHERE
+          RowAsc IN (CAST((TotalRows + 1) / 2 AS INT)) 
+      GROUP BY phishing;
+       phishing |  median_n_redirection
+      ----------+------------------------
+              0 | 0.00000000000000000000
+              1 | 0.00000000000000000000
+
 # Mean
 
       ## AVG()
@@ -15,6 +39,7 @@ Why or why not? What metrics do you have to support your answer?
       ------------------------+----------
        0.52001028806584362140 |        0
        0.36781774304757527005 |        1
+
 
 # Mode
 
