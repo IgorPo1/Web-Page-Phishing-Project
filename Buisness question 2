@@ -88,3 +88,26 @@
       SELECT phishing, MODE() WITHIN GROUP (ORDER BY url_length) AS mode_url_length
       FROM web_phishing
       GROUP BY phishing;
+
+# The % of phishing URLs that are longer than the average non-phishing URL
+
+WITH AvgNonPhishingLength AS (
+    SELECT AVG(url_length) AS avg_length
+    FROM web_phishing
+    WHERE phishing = 0
+),
+PhishingLongerThanAvg AS (
+    SELECT COUNT(*) AS count_longer
+    FROM web_phishing
+    WHERE phishing = 1 AND url_length > (SELECT avg_length FROM AvgNonPhishingLength)
+),
+TotalPhishing AS (
+    SELECT COUNT(*) AS total_phishing
+    FROM web_phishing
+    WHERE phishing = 1
+)
+SELECT 
+    (SELECT count_longer FROM PhishingLongerThanAvg) * 100.0 / 
+    (SELECT total_phishing FROM TotalPhishing) AS percentage_longer;
+
+
